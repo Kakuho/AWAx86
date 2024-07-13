@@ -1,0 +1,4 @@
+blw 25 //blow value 5 into the abyss
+blw 4  //blow value 3 into the abyss
+mlt    //multiply together
+prn    //print the result

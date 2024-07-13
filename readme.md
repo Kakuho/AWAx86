@@ -1,7 +1,17 @@
 A dumb compiler for a subset of awa5.0, targetting x86.
 
-4.0 is because I have chosen not to implement support for double bubbles.
+Frontend Passes:
 
-Modifications to the AWA5.0 Language:
+if the file is in awatalk, so extension is .awa, then 
 
-Ignore everything which mentions double bubbles.
+Awatalk -> Binary IR -> Tokens -> Backend
+
+if the file is in awassembly, extension being .awasm, then
+
+Awassembly -> Tokens -> Backend
+
+//---------------------------------------------------------------/
+
+Backend Passes:
+
+TODO

@@ -9,7 +9,8 @@ include_directories(src)
 
 set(CXX_SRCS 
       src/lexer.hpp
-      src/awatismconverter.hpp
+      src/awatismconverter.hpp  src/awatismconverter.cpp
+      src/awassembler.hpp       src/awassembler.cpp
    )
 
 add_executable(awa4x86 src/main.cpp ${CXX_SRCS})

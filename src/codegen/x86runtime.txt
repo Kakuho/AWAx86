@@ -1,0 +1,39 @@
+The runtime I have considered implementing:
+
+We maintain two stacks.
+
+First stack is our bubble abyss
+
+Second stack is for holding double bubbles (IN ORDER). Note, this has to be allocated on heap memory.
+
+I call the first stack the bubble abyss and the second the double bubble stack or DBS
+
+//---------------------------------------------------------------/
+
+Place of Allocation:
+  
+  Bubble Abyss - right after process spawn's stack pointer is the base of the bubble abyss stack
+
+  DBS - Bottom of addressable memory shall be the  base for the stack.
+
+//---------------------------------------------------------------/
+
+Direction of Growth:
+  
+  Bubbble abyss shall grow as a usual stack, i.e, from the top of ram to the bottom of ram.
+
+  DBS  shall grow in the opposite direction: i.e, from bottom of ram to the top of ram.
+
+//---------------------------------------------------------------/
+
+Double Bubble Stack Entries:
+
+  Each entry shall consists of a tag and then the actual elements following it.
+
+Design Decision:
+  
+  do we actual need them contigous or can we use any form of heap memory?
+
+//---------------------------------------------------------------/
+
+

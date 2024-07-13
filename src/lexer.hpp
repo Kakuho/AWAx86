@@ -1,6 +1,9 @@
 #ifndef LEXER_HPP
 #define LEXER_HPP
 
+// The lexer assumes that the program is in a binary intermediate representation, and generates 
+// tokens according to the binary IR.
+
 #include <vector>
 #include <cstdint>
 
