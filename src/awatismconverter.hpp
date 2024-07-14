@@ -12,7 +12,14 @@
 #include <fstream>
 #include <iostream>
 
+#include "tokens.hpp"
+
 namespace Awa4x86{
+
+struct IndexerByte{
+  std::uint8_t byte{0};
+  std::uint8_t index{0};
+};
 
 class AwatismConverter{
   public:
@@ -23,6 +30,10 @@ class AwatismConverter{
     void ConvertAwatismToBinary();
     void Match(char ch);
     char GetNextCharacter();
+    std::uint8_t ReadNext(std::uint8_t bits);
+    std::uint8_t ReadNext5(){return ReadNext(5);}
+    std::uint8_t ReadNext8(){return ReadNext(8);}
+    std::vector<std::uint8_t>&& DestructiveGetBinary(){return std::move(m_binary);}
 
   public:
     // Printing functions
@@ -34,6 +45,8 @@ class AwatismConverter{
     std::vector<char> filebuffer;
     std::size_t m_cursor;
     std::vector<std::uint8_t> m_binir;
+    std::vector<std::uint8_t> m_binary;
+    IndexerByte m_ib;
 
   private:
     void LoadFile(){

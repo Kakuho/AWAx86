@@ -24,16 +24,24 @@ namespace Awa4x86{
     return true;
   }
 
+  inline void Check5BitUnsigned(std::uint8_t val){
+    if(val > 0x1F){
+      throw std::runtime_error{"input string s is greater than maximum allowed in a 5bit unsignwed"};
+    }
+  }
+
   inline std::uint8_t Convert5BitUnsigned(std::string s){
+    // tests to ensure 5 bit unsigned 
+    if(!IsNumeric(s)){
+      throw std::runtime_error{"Convert5BitUnsigned :: input string s is either not numeric"};
+    }
     bool isNegative = s[0] == '-';
-    if(!IsNumeric(s) || isNegative){
-      throw std::runtime_error{"input string s is either not a numeric, or is negative and not unsigned"};
+    if(isNegative){
+      throw std::runtime_error{"Convert5BitUnsigned :: input string s is negative and not unsigned"};
     }
     // all validity checks passed, we convert the string to an unsigned integer
     auto input = std::stoul(s);
-    if(input > 0x1F){
-      throw std::runtime_error{"input string s is greater than maximum allowed in a 5bit unsignwed"};
-    }
+    Check5BitUnsigned(input);
     return input;
   }
 

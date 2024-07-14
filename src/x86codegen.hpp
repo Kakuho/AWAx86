@@ -1,5 +1,5 @@
-#ifndef x86_hpp
-#define x86_hpp
+#ifndef x86_CODEGEN_hpp
+#define x86_CODEGEN_hpp
 
 // hardware code gen layer for x86 architectures.
 //
@@ -22,8 +22,6 @@ namespace Awa4x86{
       inline void HandleNoOp(){
         return; // hope to god you dont do anything
       }
-
-
 
     private:
       std::ofstream m_outputfile;

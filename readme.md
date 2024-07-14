@@ -1,14 +1,11 @@
 A dumb compiler for a subset of awa5.0, targetting x86.
 
-Frontend Passes:
+There are two frontends for Awa5.0, one targeting awatalk and the other targeting 
+awassembly, where I call awassembly the shorthand notation of awatalk.
 
-if the file is in awatalk, so extension is .awa, then 
+Compiler Passes:
 
-Awatalk -> Binary IR -> Tokens -> Backend
-
-if the file is in awassembly, extension being .awasm, then
-
-Awassembly -> Tokens -> Backend
+Awatalk (.awa files) / Awassembly (.awasm files) -> Binary IR -> Tokens -> Backend -> X86
 
 //---------------------------------------------------------------/
 

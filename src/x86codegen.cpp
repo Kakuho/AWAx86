@@ -3,7 +3,6 @@
 namespace Awa4x86{
 
 void X86Generator::WritePrelude(){
-  // basic 
 
 }
 
