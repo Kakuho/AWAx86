@@ -1,52 +1,51 @@
+#include <stdexcept>
+#include <string>
+#include <cstring>
+
 #include "awatismconverter.hpp"
 #include "awassembler.hpp"
+#include "x86codegen.hpp"
+#include "pipeline.hpp"
 
-void TestAwasm(std::string inputString){
-  Awa4x86::Awassembler awasm2{std::vector<char>(inputString.begin(), inputString.end())};
-  awasm2.PrintCharacters();
-  awasm2.PrintHexCharacters();
-  awasm2.Convert();
+
+void TestExample(){
+  using namespace Awax86;
+  Awax86::X86Generator codegen{std::vector<Awax86::Tokens>{
+    Tokens{Opcode::blow, 10},
+    Tokens{Opcode::blow, 4},
+    Tokens{Opcode::mult, 0xFF},
+  }};
+  codegen.Generate();
 }
 
-int main(){
-  /*
-  Awa4x86::AwatismConverter conv{"./../programs/initial.awa"};
-  conv.ConvertAwatismToBinary();
-  conv.PrintBuffer();
-  conv.PrintBinaryIR();
+void ExamplePipeline(){
+  using namespace Awax86;
+  Awax86::Pipeline pipeline{"./../programs/awaseembly/example.awasm"};
+  pipeline.Run();
 
-  Awa4x86::Awassembler awasm{"./../programs/awaseembly/noncomments.awsm"};
-  awasm.PrintCharacters();
-  awasm.PrintHexCharacters();
-  */
+}
 
-  std::string example = R"-(
-  blo 25
-  blo 4 
-  mul   
-  prn   
-  )-";
+struct CliArgs{
+  std::string input_name;
+  std::string output_name;
+};
 
-  std::string numerics = R"-(
-  blo 25
-  blo 31
-  blo 0
-  blo -22
-  )-";
-
-  std::string comments = R"-(
-  blo 25    \\ here's a comment for you
-  blo 31
-  )-";
-
-  std::string runningexample = R"-(
-  4dd
-  cnt
-  div div 
-  dpl
-  eql
-  gr8
-  )-";
-
-  TestAwasm(runningexample);
+int main(int argc, const char* argv[]){
+  CliArgs argpack;
+  if(argc != 4 && argc != 2){
+    throw std::runtime_error{"format: input_file -o output_file"};
+  }
+  if(argc == 4){
+    if(strcmp(argv[2], "-o") != 0){
+      throw std::runtime_error{"format: input_file -o output_file"};
+    }
+    argpack.input_name = argv[1]; 
+    argpack.output_name = argv[3];
+  }
+  else if(argc == 2){
+    argpack.input_name = argv[1]; 
+    argpack.output_name = "output.s";
+  }
+  Awax86::Pipeline pipeline{std::move(argpack.input_name), std::move(argpack.output_name)};
+  pipeline.Run();
 }

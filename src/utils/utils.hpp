@@ -9,7 +9,7 @@
 
 // just general utilities
 
-namespace Awa4x86{
+namespace Awax86{
   inline bool IsNumeric(std::string& s){
     // the beginning may only start with a '-', or is a digit
     if(! (std::isdigit(static_cast<unsigned char>(s[0])) || s[0] == '-')){

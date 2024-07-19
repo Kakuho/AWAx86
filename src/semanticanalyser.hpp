@@ -40,7 +40,7 @@
 #include <vector>
 #include <cstdint>
 
-namespace Awa4x86{
+namespace Awax86{
 
 class SemanticAnalyser{
   public:

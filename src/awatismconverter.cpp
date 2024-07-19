@@ -1,6 +1,6 @@
 #include "awatismconverter.hpp"
 
-namespace Awa4x86{
+namespace Awax86{
 
 AwatismConverter::AwatismConverter(std::string&& file_name): 
   m_cursor{0}, m_filename{std::move(file_name)}{

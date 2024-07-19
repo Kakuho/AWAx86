@@ -3,7 +3,7 @@
 
 #include <cstdint>
 
-namespace Awa4x86{
+namespace Awax86{
 
 // lexer tokens
 //  purposefully enum and not enumclass, as it represents integral constants

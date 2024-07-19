@@ -1,4 +1,6 @@
-blw 25 //blow value 5 into the abyss
-blw 4  //blow value 3 into the abyss
-mlt    //multiply together
-prn    //print the result
+blo 5  // blow value 5 into the abyss
+blo 3  // blow value 3 into the abyss
+mul    // multiply together
+prn    // print top of the stack
+blo 63
+prn

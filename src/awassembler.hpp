@@ -16,7 +16,7 @@
 
 #include "utils/utils.hpp"
 
-namespace Awa4x86{
+namespace Awax86{
 
 class Awassembler{
   public:
@@ -43,7 +43,7 @@ class Awassembler{
     // main driver procedure
     void Convert();
     // after calling this, the class is non functional
-    std::vector<std::uint8_t>&& DestructiveGetBinaryIR();
+    std::vector<std::uint8_t>&& DestructiveGetBinaryIR(){return std::move(m_binary);}
 
   private:
     // automaton handlers - modeled as DFAs

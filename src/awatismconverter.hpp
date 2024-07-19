@@ -14,7 +14,7 @@
 
 #include "tokens.hpp"
 
-namespace Awa4x86{
+namespace Awax86{
 
 struct IndexerByte{
   std::uint8_t byte{0};

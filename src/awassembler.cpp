@@ -1,13 +1,13 @@
 #include "awassembler.hpp"
 #include <stdexcept>
 
-namespace Awa4x86{
+namespace Awax86{
 
 Awassembler::Awassembler(std::string&& filename)
   : m_filename{std::move(filename)},
+    m_cursor{0},
     m_wslut{{' ', '\n', '\r'}},
-    m_numbers{{'-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}},
-    m_cursor{0}
+    m_numbers{{'-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}}
 {
   m_binary.reserve(50);
   LoadFile();
@@ -16,9 +16,9 @@ Awassembler::Awassembler(std::string&& filename)
 
 Awassembler::Awassembler(std::vector<char>&& input)
   : m_inputBuffer{std::move(input)},
+    m_cursor{0},
     m_wslut{{' ', '\n', '\r'}},
-    m_numbers{{'-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}},
-    m_cursor{0}
+    m_numbers{{'-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'}}
 {
   m_binary.reserve(50);
 }
@@ -29,7 +29,7 @@ Awassembler::Awassembler(std::vector<char>&& input)
 
 void Awassembler::Match(char ch){
   if(m_inputBuffer[m_cursor] == ch){
-    std::cout << "matched " << ch << '\n';
+    //std::cout << "matched " << ch << '\n';
     m_cursor++;
   }
   else{
@@ -41,7 +41,7 @@ void Awassembler::MatchWhitespace(){
   bool isWhitespace = m_wslut.find(m_inputBuffer[m_cursor]) != 
     m_wslut.end();
   if(isWhitespace){
-    std::cout << "matched isWhitespace" << '\n';
+    //std::cout << "matched isWhitespace" << '\n';
     m_cursor++;
   }
   else{
@@ -50,6 +50,9 @@ void Awassembler::MatchWhitespace(){
 }
 
 char Awassembler::GetNextCharacter(){
+  if(m_cursor == 0){
+    return m_inputBuffer[m_cursor];
+  }
   if(m_cursor < m_inputBuffer.size()){
     m_cursor++;
     return m_inputBuffer[m_cursor];
@@ -77,7 +80,7 @@ std::string Awassembler::ReadDigitsUntilWhitespace(){
     value.push_back(m_inputBuffer[m_cursor]);
     m_cursor++;
   }
-  std::cout << "digits: " << value << '\n';
+  //std::cout << "digits: " << value << '\n';
   return value;
 }
 
@@ -105,7 +108,7 @@ void Awassembler::PrintHexCharacters(){
 //---------------------------------------------------------------//
 
 void Awassembler::Convert(){
-  while(m_cursor < m_inputBuffer.size()){
+  while(m_cursor < m_inputBuffer.size() - 1){
     char ch = GetNextCharacter();
     switch(ch){
       // automaton starters
@@ -143,16 +146,17 @@ void Awassembler::Convert(){
         HandleP();
         break;
       case 'r':
-        HandleP();
+        HandleR();
         break;
       case 's':
-        HandleP();
+        HandleS();
         break;
       case 't':
-        HandleP();
+        HandleT();
         break;
       // for comments in awassembly
       case '\\':
+      case '/':
         SkipUntilNewLine();
         break;
       // on any whitespace we fall through until we hit the whitespace 
@@ -196,11 +200,9 @@ void Awassembler::HandleB(){
   Match('b');
   Match('l');
   Match('o');
-  Match(' ');
+  MatchWhitespace();
   std::uint8_t value = 
-    Convert5BitUnsigned(ReadDigitsUntilWhitespace());
-  // actual work
-  std::cout << static_cast<unsigned>(value && 0xFF) << '\n';
+    Convert8BitSigned(ReadDigitsUntilWhitespace());
   DoBlo(value);
 }
 
@@ -216,12 +218,12 @@ void Awassembler::HandleC(){
 void Awassembler::HandleD(){
   // this requires a switch case
   Match('d');
+  m_cursor--;
   char next = GetNextCharacter();
   switch(next){
     case 'i':
       Match('i');
       Match('v');
-      Match(' ');
       MatchWhitespace();
       // actual work
       DoDiv();
@@ -229,11 +231,12 @@ void Awassembler::HandleD(){
     case 'p':
       Match('p');
       Match('l');
-      Match(' ');
       MatchWhitespace();
       // actual work
       DoDpl();
       break;
+    default:
+      throw std::runtime_error{"syntax error, unrecoginsable chaarcter after d"};
   }
 }
 
@@ -265,6 +268,7 @@ void Awassembler::HandleJ(){
 
 void Awassembler::HandleL(){
   Match('l');
+  m_cursor--;
   char next = GetNextCharacter();
   switch(next){
     case 'b':
@@ -288,6 +292,7 @@ void Awassembler::HandleL(){
 
 void Awassembler::HandleM(){
   Match('m');
+  m_cursor--;
   char next = GetNextCharacter();
   switch(next){
     case 'r':
@@ -315,6 +320,7 @@ void Awassembler::HandleN(){
 
 void Awassembler::HandleP(){
   Match('p');
+  m_cursor--;
   char next = GetNextCharacter();
   switch(next){
     case 'o':
@@ -326,6 +332,7 @@ void Awassembler::HandleP(){
     case 'r':
       {
         Match('r');
+        m_cursor--;
         char next = GetNextCharacter();
         switch(next){
           case '1':
@@ -345,6 +352,7 @@ void Awassembler::HandleP(){
 
 void Awassembler::HandleR(){
   Match('r');
+  m_cursor--;
   char next = GetNextCharacter();
   switch(next){
     case 'e':
@@ -364,6 +372,7 @@ void Awassembler::HandleR(){
 
 void Awassembler::HandleS(){
   Match('s');
+  m_cursor--;
   char next = GetNextCharacter();
   switch(next){
     case 'b':
@@ -496,6 +505,7 @@ void Awassembler::DoSbm(std::uint8_t u5){
     throw std::runtime_error{"Internal Error: DoSbm did not recieve a 5 bit unsigned"};
   }
   m_binary.push_back(0x6);
+  m_binary.push_back(u5);
 }
 
 void Awassembler::DoSrn(std::uint8_t u5){
@@ -506,6 +516,7 @@ void Awassembler::DoSrn(std::uint8_t u5){
     throw std::runtime_error{"Internal Error: DoSrn did not recieve a 5 bit unsigned"};
   }
   m_binary.push_back(0x9);
+  m_binary.push_back(u5);
 }
 
 void Awassembler::DoSub(){

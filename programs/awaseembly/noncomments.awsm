@@ -1,4 +1,3 @@
-blw 25
-blw 4 
-mlt
-prn
+blo 25
+blo 4
+mul    

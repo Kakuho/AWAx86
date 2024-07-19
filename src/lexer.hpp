@@ -9,7 +9,7 @@
 
 #include "tokens.hpp"
 
-namespace Awa4x86{
+namespace Awax86{
 
 class Lexer{
   public:
@@ -20,6 +20,9 @@ class Lexer{
     // operational
     std::uint8_t ReadByte();
     void AnalyseBinaryIR();
+    void DestructiveWriteBinaryInputIR(std::vector<std::uint8_t>&& binary){
+      m_binary = std::move(binary);
+    }
     std::vector<Tokens>&& DestructiveReadTokens(){ return std::move(m_tokens); }
 
   private:

@@ -1,6 +1,6 @@
 #include "lexer.hpp"
 
-namespace Awa4x86{
+namespace Awax86{
 
 //---------------------------------------------------------------//
 // Lifteime
@@ -27,6 +27,12 @@ void Lexer::AnalyseBinaryIR(){
       // system
       case Opcode::nop:
         m_tokens.push_back(Tokens{.m_token = Opcode::nop});
+      case Opcode::print:
+        m_tokens.push_back(Tokens{.m_token = Opcode::print});
+        break;
+      case Opcode::pr1nt:
+        m_tokens.push_back(Tokens{.m_token = Opcode::pr1nt});
+        break;
       // pile manipulation
       case Opcode::blow:
         m_tokens.push_back(Tokens{.m_token = Opcode::blow, .value = ReadByte()});

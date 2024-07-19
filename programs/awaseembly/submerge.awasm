@@ -1,0 +1,4 @@
+blo 10
+blo 5
+sbm 1
+prn       // should print awascii 10 == S
