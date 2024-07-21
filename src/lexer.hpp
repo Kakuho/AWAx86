@@ -15,6 +15,7 @@ class Lexer{
   public:
     // lifetime
     Lexer();
+    Lexer(std::vector<std::uint8_t>&& input);
 
   public:
     // operational

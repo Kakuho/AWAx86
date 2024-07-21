@@ -1,4 +1,5 @@
 #include "lexer.hpp"
+#include <vector>
 
 namespace Awax86{
 
@@ -8,6 +9,13 @@ namespace Awax86{
 
 Lexer::Lexer()
   : m_cursor{0}
+{
+
+}
+
+Lexer::Lexer(std::vector<std::uint8_t>&& input): 
+  m_cursor{0},
+  m_binary{std::move(input)}
 {
 
 }
@@ -27,11 +35,21 @@ void Lexer::AnalyseBinaryIR(){
       // system
       case Opcode::nop:
         m_tokens.push_back(Tokens{.m_token = Opcode::nop});
+        break;
       case Opcode::print:
         m_tokens.push_back(Tokens{.m_token = Opcode::print});
         break;
       case Opcode::pr1nt:
         m_tokens.push_back(Tokens{.m_token = Opcode::pr1nt});
+        break;
+      case Opcode::red:
+        m_tokens.push_back(Tokens{.m_token = Opcode::red});
+        break;
+      case Opcode::r3d:
+        m_tokens.push_back(Tokens{.m_token = Opcode::r3d});
+        break;
+      case Opcode::terminate:
+        m_tokens.push_back(Tokens{.m_token = Opcode::terminate});
         break;
       // pile manipulation
       case Opcode::blow:

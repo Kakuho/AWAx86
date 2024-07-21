@@ -37,11 +37,16 @@ enum Opcode : std::uint8_t {
 };
 
 struct Tokens{
+  friend bool operator==(const Tokens& lhs, const Tokens& rhs);
   Opcode m_token;         // each opcode define a token type
-  std::uint8_t value;     // value is defined only when the token type 
+  std::uint8_t value{0};     // value is defined only when the token type 
                           // expects a parameter, otherwise the value is 
                           // undefined
 };
+
+inline bool operator==(const Tokens& lhs, const Tokens& rhs){
+  return (lhs.m_token == rhs.m_token) && (lhs.value == rhs.value);
+}
 
 }
 

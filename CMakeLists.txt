@@ -30,6 +30,7 @@ find_package(Catch2 3 REQUIRED)
 
 set(TEST_SRCS 
       tests/awasm/awassembler.cpp
+      tests/lexer/lexer.cpp
    )
 
 add_executable(tests ${TEST_SRCS} ${CXX_SRCS})
