@@ -22,7 +22,7 @@ target_compile_features(awax86 PUBLIC cxx_std_20)
 
 set_target_properties(awax86 PROPERTIES CXX_EXTENSIONS OFF)
 
-target_compile_options(awax86 PRIVATE -g -std=c++20)
+target_compile_options(awax86 PRIVATE -g -std=c++23)
 
 # unit tests
 
@@ -37,6 +37,6 @@ add_executable(tests ${TEST_SRCS} ${CXX_SRCS})
 
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
 
-target_compile_options(tests PRIVATE -g -std=c++20)
+target_compile_options(tests PRIVATE -g -std=c++23)
 
 #add_custom_command(TARGET tests POST_BUILD COMMAND tests)

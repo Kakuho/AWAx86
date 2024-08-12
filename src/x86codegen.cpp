@@ -126,11 +126,20 @@ void X86Generator::DestroyAwascii(){
 }
 
 void X86Generator::WriteConclusion(){
+  if(auto stackSize = m_bubbleStack.size(); stackSize > 0){
+    m_output << "xorq %rax, %rax" << '\n'
+             << "movq $" << static_cast<unsigned>(stackSize) << ", %rax" << '\n'
+             << "movq $8, %rsi" << '\n'
+             << "mulq %rsi"   << '\n'
+             << "addq %rax, %rsp" << '\n';
+  }
+  /*
   while(m_stackSize > 0){
     // i shall use r15 as my dumpster shoot
     m_output << "pop %r15\n";
     DecreaseStackSize();
   }
+  */
   m_output << "pop %rbp\n"
            << "ret\n";
 }
@@ -189,12 +198,13 @@ void X86Generator::HandlePrn(){
            << "subq $1, %rsi"  << '\n'
            << "movq (%rbp, %rsi), %rdi" << '\n'
            << "call putchar" << '\n';
-  DecreaseStackSize();
+  m_bubbleStack.pop_back();
 }
 
 void X86Generator::HandleBlo(std::uint8_t u5){
   // blow a bubble onto the bubble stack
   m_output << "pushq $" << static_cast<unsigned>(u5&0x1FF) << '\n';
+  m_bubbleStack.push_back(BubbleType::Single);
   IncreaseStackSize();
 }
 
@@ -208,16 +218,35 @@ void X86Generator::HandleSbm(std::uint8_t u5){
 */
 
 void X86Generator::HandlePop(){
-  // pop the top most bubble
-  //  todo: handle double bubbles
-  m_output << "popq %r15" << '\n';
+  // pops the top most bubble
+  auto toptype = TopBubble();
+  if(toptype == BubbleType::Single){
+    m_output << "popq %r15" << '\n';
+  }
+  else{
+    //  todo: handle double bubbles
+    //        we will need to deallacote ( call free() ) from the top most double bubble
+    throw std::runtime_error{
+      std::format("X86Generator::HandlePop()::Double bubble not implemented")
+    };
+  }
+  m_bubbleStack.pop_back();
   DecreaseStackSize();
 }
 
 void X86Generator::HandleDpl(){
   // duplicate the top most bubble
-  //  todo: handle double bubbles - deep copy / shallow copy?
-  m_output << "pushq (%rsp)" << '\n';
+  auto toptype = TopBubble();
+  if(toptype == BubbleType::Single){
+    m_output << "pushq (%rsp)" << '\n';
+  }
+  else{
+    //  todo: handle double bubbles - implement deep copy 
+    throw std::runtime_error{
+      std::format("X86Generator::HandleDpl()::Double bubble not implemented")
+    };
+  }
+  m_bubbleStack.push_back(toptype);
   IncreaseStackSize();
 }
 
@@ -227,14 +256,145 @@ void X86Generator::HandleSrn(){
   IncreaseStackSize();
 }
 
+void X86Generator::HandleMrg(){
+  using enum BubbleType;
+  BubbleType top = TopBubble();
+  BubbleType second = GetBubble(m_bubbleStack.size() - 2);
+  if((top == Single) && (second == Single)){
+    // we essentially perform a surround but with two elements
+    throw std::runtime_error{
+      std::format("X86Generator::HandleMrg()::(Single, Single) bubble not implemented")
+    };
+  }
+  else if(top == Double){
+    // allocate a double bubble here
+    throw std::runtime_error{
+      std::format("X86Generator::HandleMrg()::(Single, Double) bubble not implemented")
+    };
+  }
+  else if(second == Double){
+    // allocate a double bubble here
+    throw std::runtime_error{
+      std::format("X86Generator::HandleMrg()::(Double, Single) bubble not implemented")
+    };
+  }
+  else{
+    throw std::runtime_error{
+      std::format("X86Generator::HandleMrg()::(Double, Double) bubble not implemented")
+    };
+  }
+}
+
+void X86Generator::HandleAdd(){
+  using enum BubbleType;
+  BubbleType top = TopBubble();
+  BubbleType second = GetBubble(m_bubbleStack.size() - 2);
+  m_bubbleStack.pop_back();
+  m_bubbleStack.pop_back();
+  if((top == Single) && (second == Single)){
+    // Single, Single
+    m_output << "popq %rsi" << '\n' 
+             << "popq %rax" << '\n'
+             << "addq %rsi, %rax" << '\n'
+             << "pushq %rax" << '\n';
+    m_bubbleStack.push_back(Single);
+  }
+  else if(top == Double){
+    // (Double, Single)
+    throw std::runtime_error{
+      std::format("X86Generator::HandleAdd()::(Double, Single) bubble not implemented")
+    };
+  }
+  else if(second == Double){
+    // (Single, Double)
+    throw std::runtime_error{
+      std::format("X86Generator::HandleAdd()::(Single, Double) bubble not implemented")
+    };
+  }
+  else{
+    // (Double, Double)
+    // we need to figure out how long each of the double bubbles are
+    throw std::runtime_error{
+      std::format("X86Generator::HandleAdd()::(Double, Double) bubble not implemented")
+    };
+  }
+}
+
+void X86Generator::HandleSub(){
+  using enum BubbleType;
+  // prelude
+  BubbleType top = TopBubble();
+  BubbleType second = GetBubble(m_bubbleStack.size() - 2);
+  m_bubbleStack.pop_back();
+  m_bubbleStack.pop_back();
+  // case analysis
+  if((top == Single) && (second == Single)){
+    // Single, Single
+    m_output << "popq %rsi" << '\n' 
+             << "popq %rax" << '\n'
+             << "subq %rsi, %rax" << '\n'
+             << "pushq %rax" << '\n';
+    m_bubbleStack.push_back(Single);
+  }
+  else if(top == Double){
+    // (Double, Single)
+    throw std::runtime_error{
+      std::format("X86Generator::HandleAdd()::(Double, Single) bubble not implemented")
+    };
+  }
+  else if(second == Double){
+    // (Single, Double)
+    throw std::runtime_error{
+      std::format("X86Generator::HandleAdd()::(Single, Double) bubble not implemented")
+    };
+  }
+  else{
+    // (Double, Double)
+    // we need to figure out how long each of the double bubbles are
+    throw std::runtime_error{
+      std::format("X86Generator::HandleAdd()::(Double, Double) bubble not implemented")
+    };
+  }
+}
+
 void X86Generator::HandleMul(){
   // take the two top most registers, pop it off the bubble stack,
   // multiply, and store the result back onto the bubble stack
-  m_output << "popq %rsi" << '\n'
-           << "popq %rax" << '\n'
-           << "mulq %rsi" << '\n'
-           << "pushq %rax" << '\n';
-  DecreaseStackSize();
+  using enum BubbleType;
+  // prelude
+  BubbleType top = TopBubble();
+  BubbleType second = GetBubble(m_bubbleStack.size() - 2);
+  m_bubbleStack.pop_back();
+  m_bubbleStack.pop_back();
+  // case analysis
+  if((top == Single) && (second == Single)){
+    // Single, Single
+    m_output << "popq %rsi" << '\n'
+             << "popq %rax" << '\n'
+             << "mulq %rsi" << '\n'
+             << "pushq %rax" << '\n';
+    m_bubbleStack.push_back(Single);
+    //DecreaseStackSize();
+  }
+  else if(top == Double){
+    // (Double, Single)
+    throw std::runtime_error{
+      std::format("X86Generator::HandleMul()::(Double, Single) bubble not implemented")
+    };
+  }
+  else if(second == Double){
+    // (Single, Double)
+    throw std::runtime_error{
+      std::format("X86Generator::HandleMul()::(Single, Double) bubble not implemented")
+    };
+  }
+  else{
+    // (Double, Double)
+    // we need to figure out how long each of the double bubbles are
+    throw std::runtime_error{
+      std::format("X86Generator::HandleMul()::(Double, Double) bubble not implemented")
+    };
+  }
 }
 
 } // namespace Awax86
