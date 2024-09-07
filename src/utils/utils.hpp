@@ -10,7 +10,7 @@
 // just general utilities
 
 namespace Awax86{
-  inline bool IsNumeric(std::string& s){
+  [[nodiscard]] inline bool IsNumeric(std::string& s){
     // the beginning may only start with a '-', or is a digit
     if(! (std::isdigit(static_cast<unsigned char>(s[0])) || s[0] == '-')){
       return false;
@@ -30,7 +30,7 @@ namespace Awax86{
     }
   }
 
-  inline std::uint8_t Convert5BitUnsigned(std::string s){
+  [[nodiscard]] inline std::uint8_t Convert5BitUnsigned(std::string s){
     // tests to ensure 5 bit unsigned 
     if(!IsNumeric(s)){
       throw std::runtime_error{"Convert5BitUnsigned :: input string s is either not numeric"};
